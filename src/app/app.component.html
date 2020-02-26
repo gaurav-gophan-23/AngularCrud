@@ -1,4 +1,14 @@
 <div class="container">
-  <app-employee-list></app-employee-list>
+  <nav class="navbar navbar-default">
+    <ul class="nav navbar-nav">
+      <li routerLinkActive="active">
+        <a routerLink="list">List</a>
+      </li>
+      <li routerLinkActive="active">
+        <a routerLink="edit/0">Create</a>
+      </li>
+    </ul>
+  </nav>
+  <div class="spinner" *ngIf="showLoadingIndicator"></div>
+  <router-outlet></router-outlet>
 </div>
-<!-- <router-outlet></router-outlet> -->
