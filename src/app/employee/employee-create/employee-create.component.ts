@@ -54,8 +54,14 @@ export class EmployeeCreateComponent implements OnInit {
         this.frmEmployee.reset();
         this.panelText = 'Create Employee';
       } else {
-        this.employee = Object.assign({}, this.employeeService.getEmployee(id));
-        this.panelText = 'Edit Employee';
+        this.employeeService.getEmployee(id).subscribe((employee: Employee) => {
+          employee.dateOfBirth = new Date(employee.dateOfBirth);
+          this.employee = employee;
+          this.panelText = 'Edit Employee';
+        },
+          (err: string) => {
+            console.log(err);
+          });
       }
     });
     this.datePickerConfig = Object.assign({},
@@ -73,17 +79,18 @@ export class EmployeeCreateComponent implements OnInit {
   }
 
   onEmpSubmit(): void {
-    this.employeeService.saveEmployee(Object.assign({}, this.employee));
-    this.frmEmployee.reset();
-    this.router.navigate(['list']);
+    this.employeeService.saveEmployee(this.employee)
+      .subscribe((employee: Employee) => {
+        this.frmEmployee.reset();
+        this.router.navigate(['list']);
+      },
+        (err: string) => {
+          console.log(err);
+        });
   }
 
   toggelPhotoPreview() {
     this.previewPhoto = !this.previewPhoto;
-  }
-
-  freEmpSubmit(frmEmp: FormGroup) {
-    console.log(frmEmp);
   }
 
 }

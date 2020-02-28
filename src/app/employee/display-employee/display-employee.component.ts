@@ -42,8 +42,13 @@ export class DisplayEmployeeComponent implements OnInit {
 
   onDeleteEmployee() {
     if (confirm('Are you sure you want to delete employee with name ' + this.employee.name + '?')) {
-      this.employeeService.deleteEmployee(this.employee.id);
-      // this.router.navigateByUrl('/list');
+      this.employeeService.deleteEmployee(this.employee.id).subscribe((res) => {
+        this.employeeService.itemDeleted.next(true);
+        this.router.navigateByUrl('/list');
+      },
+        (err: string) => {
+          console.log(err);
+        });
       // return true;
     } else {
       // return false;

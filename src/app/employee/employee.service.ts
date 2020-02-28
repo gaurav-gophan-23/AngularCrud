@@ -1,72 +1,63 @@
 import { Injectable } from '@angular/core';
 import { Employee } from '../models/employee';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { delay } from 'rxjs/operators';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Injectable()
 export class EmployeeService {
-    employees: Employee[] = [
-        {
-            id: 1,
-            name: 'Mark',
-            gender: 'Male',
-            contactPreference: 'Email',
-            email: 'mark@pragimtech.com',
-            dateOfBirth: new Date('10/25/1988'),
-            department: '3',
-            isActive: true,
-            photoPath: 'assets/images/mark.png'
-        },
-        {
-            id: 2,
-            name: 'Mary',
-            gender: 'Female',
-            contactPreference: 'Phone',
-            phoneNumber: 2345978640,
-            dateOfBirth: new Date('11/20/1979'),
-            department: '2',
-            isActive: true,
-            photoPath: 'assets/images/mary.png'
-        },
-        {
-            id: 3,
-            name: 'John',
-            gender: 'Male',
-            contactPreference: 'Phone',
-            phoneNumber: 5432978640,
-            dateOfBirth: new Date('3/25/1976'),
-            department: '3',
-            isActive: false,
-            photoPath: 'assets/images/john.png'
-        }
-    ];
+    employees: Employee[];
+    itemDeleted: Subject<boolean> = new Subject<boolean>();
+
+    constructor(private http: HttpClient) { }
 
     getEmployees(): Observable<Employee[]> {
-        return of(this.employees).pipe(delay(2000));
+        return this.http.get<Employee[]>('http://localhost:3000/employees')
+            .pipe(catchError(this.handleError));
+        // return of(this.employees).pipe(delay(2000));
     }
 
-    getEmployee(id: number): Employee {
-        return this.employees.find(x => x.id === id);
+    private handleError(httpError: HttpErrorResponse) {
+        if (httpError.error instanceof ErrorEvent) {
+            console.log('Client side Error ', httpError.error.message);
+        } else {
+            console.log('Server side Error ', httpError);
+        }
+        return throwError('There is an error');
     }
 
-    saveEmployee(employee: Employee) {
+    getEmployee(id: number): Observable<Employee> {
+        return this.http.get<Employee>('http://localhost:3000/employees/' + id)
+            .pipe(catchError(this.handleError));
+        // return this.employees.find(x => x.id === id);
+    }
+
+    saveEmployee(employee: Employee): Observable<Employee | void> {
         if (employee.id === null) {
 
-            const maxId = this.employees.reduce(function (e1, e2) {
-                return (e1.id > e2.id) ? e1 : e2;
-            }).id;
-            employee.id = maxId;
-            this.employees.push(employee);
+            // const maxId = this.employees.reduce(function (e1, e2) {
+            //     return (e1.id > e2.id) ? e1 : e2;
+            // }).id;
+            // employee.id = maxId;
+            // this.employees.push(employee);
+
+            return this.http.post<Employee>('http://localhost:3000/employees', employee,
+                { headers: new HttpHeaders({ 'content-type': 'application/json' }) })
+                .pipe(catchError(this.handleError));
         } else {
-            const foundIndex = this.employees.findIndex(x => x.id === employee.id);
-            this.employees[foundIndex] = employee;
+            // const foundIndex = this.employees.findIndex(x => x.id === employee.id);
+            // this.employees[foundIndex] = employee;
+
+            return this.http.put<void>('http://localhost:3000/employees/' + employee.id, employee,
+                { headers: new HttpHeaders({ 'content-type': 'application/json' }) })
+                .pipe(catchError(this.handleError));
         }
     }
 
     deleteEmployee(id: number) {
-        const i = this.employees.findIndex(x => x.id === id);
-        if (i !== -1) {
-            this.employees.splice(i, 1);
-        }
+        return this.http.delete('http://localhost:3000/employees/' + id)
+            .pipe(catchError(this.handleError));
     }
 }

@@ -3,6 +3,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -18,6 +19,7 @@ import { EmployeeFilterPipe } from './employee/employee-filter.pipe';
 import { EmployeeListResolverService } from './employee/employee-list-resolver.service';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { EmployeeDetailsGuardService } from './employee/employee-details-guard.service';
+import { AccordionComponent } from './shared/accordion/accordion.component';
 
 @NgModule({
   declarations: [
@@ -29,11 +31,13 @@ import { EmployeeDetailsGuardService } from './employee/employee-details-guard.s
     DisplayEmployeeComponent,
     EmployeeDetailsComponent,
     EmployeeFilterPipe,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    AccordionComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    HttpClientModule,
     FormsModule,
     BsDatepickerModule.forRoot(),
     ReactiveFormsModule,

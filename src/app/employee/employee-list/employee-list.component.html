@@ -3,3 +3,4 @@
 </div>
 
 <app-display-employee *ngFor="let employee of employees | employeeFilterPipe:searchTerm" [employee]="employee" [searchTerm]="searchTerm"></app-display-employee>
+<div *ngIf="error">{{ error }}</div>
