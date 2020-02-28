@@ -76,20 +76,6 @@
       "password": "A",
       "confirmPassword": "A",
       "phoneNumber": "12345"
-    },
-    {
-      "id": 7,
-      "name": "G",
-      "gender": "Male",
-      "contactPreference": "Email",
-      "email": "g@g.com",
-      "dateOfBirth": "2020-01-31T18:30:00.000Z",
-      "department": "10",
-      "isActive": true,
-      "photoPath": "assets/images/john.png",
-      "password": "A",
-      "confirmPassword": "A",
-      "phoneNumber": "12345"
     }
   ]
 }

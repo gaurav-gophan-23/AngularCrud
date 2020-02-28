@@ -9,13 +9,13 @@ import { EmployeeService } from '../employee.service';
   styleUrls: ['./employee-details.component.scss']
 })
 export class EmployeeDetailsComponent implements OnInit {
-  private id: number;
+  private id: string;
   employee: Employee;
   constructor(private route: ActivatedRoute, private employeeService: EmployeeService, private router: Router) { }
 
   ngOnInit() {
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
-      this.id = +paramMap.get('id');
+      this.id = paramMap.get('id');
       this.employeeService.getEmployee(this.id).subscribe((employee: Employee) => {
         this.employee = employee;
       },
@@ -25,12 +25,12 @@ export class EmployeeDetailsComponent implements OnInit {
     });
   }
 
-  onViewNextEmployee() {
-    this.employeeService.getEmployees().subscribe((employees: Employee[]) => {
-      const empCount = employees.length;
-      this.id = this.id >= empCount ? (this.id + 1) % empCount : this.id + 1;
-      this.router.navigate(['/employee', this.id]);
-    });
-  }
+  // onViewNextEmployee() {
+  //   this.employeeService.getEmployees().subscribe((employees: Employee[]) => {
+  //     const empCount = employees.length;
+  //     this.id = this.id >= empCount ? (this.id + 1) % empCount : this.id + 1;
+  //     this.router.navigate(['/employee', this.id]);
+  //   });
+  // }
 
 }

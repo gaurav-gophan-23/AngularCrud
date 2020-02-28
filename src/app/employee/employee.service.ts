@@ -4,18 +4,28 @@ import { Observable, of, Subject } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 
 @Injectable()
 export class EmployeeService {
-    employees: Employee[];
+    baseUrl: string = 'https://angular-demo-service.firebaseio.com/employees';
     itemDeleted: Subject<boolean> = new Subject<boolean>();
 
     constructor(private http: HttpClient) { }
 
-    getEmployees(): Observable<Employee[]> {
-        return this.http.get<Employee[]>('http://localhost:3000/employees')
-            .pipe(catchError(this.handleError));
+    getEmployees(): Observable<any[]> {
+        return this.http.get<{ a: Employee }[]>(this.baseUrl + ".json")
+            .pipe(
+                map((x) => {
+                    const employees: Employee[] = [];
+                    for (const a of Object.keys(x)) {
+                        employees.push(
+                            Object.assign(x[a], { id: a })
+                        );
+                    }
+                    return employees;
+                }),
+                catchError(this.handleError));
         // return of(this.employees).pipe(delay(2000));
     }
 
@@ -28,9 +38,14 @@ export class EmployeeService {
         return throwError('There is an error');
     }
 
-    getEmployee(id: number): Observable<Employee> {
-        return this.http.get<Employee>('http://localhost:3000/employees/' + id)
-            .pipe(catchError(this.handleError));
+    getEmployee(id: string): Observable<Employee> {
+        return this.http.get<Employee>(this.baseUrl + '/' + id + '.json')
+            .pipe(
+                map((x) => {
+                    x.id = id;
+                    return x;
+                }),
+                catchError(this.handleError));
         // return this.employees.find(x => x.id === id);
     }
 
@@ -43,21 +58,21 @@ export class EmployeeService {
             // employee.id = maxId;
             // this.employees.push(employee);
 
-            return this.http.post<Employee>('http://localhost:3000/employees', employee,
+            return this.http.post<Employee>(this.baseUrl + '.json', employee,
                 { headers: new HttpHeaders({ 'content-type': 'application/json' }) })
                 .pipe(catchError(this.handleError));
         } else {
             // const foundIndex = this.employees.findIndex(x => x.id === employee.id);
             // this.employees[foundIndex] = employee;
 
-            return this.http.put<void>('http://localhost:3000/employees/' + employee.id, employee,
+            return this.http.put<void>(this.baseUrl + '/' + employee.id + '.json', employee,
                 { headers: new HttpHeaders({ 'content-type': 'application/json' }) })
                 .pipe(catchError(this.handleError));
         }
     }
 
-    deleteEmployee(id: number) {
-        return this.http.delete('http://localhost:3000/employees/' + id)
+    deleteEmployee(id: string) {
+        return this.http.delete(this.baseUrl + '/' + id + '.json')
             .pipe(catchError(this.handleError));
     }
 }

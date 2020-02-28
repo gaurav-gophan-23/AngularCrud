@@ -10,7 +10,7 @@ import { EmployeeService } from '../employee.service';
 })
 export class DisplayEmployeeComponent implements OnInit {
   private _employee: Employee;
-  public selectedEmployee: number;
+  public selectedEmployee: string;
   @Input() searchTerm: string;
 
   @Input()
@@ -25,7 +25,7 @@ export class DisplayEmployeeComponent implements OnInit {
     private employeeService: EmployeeService) { }
 
   ngOnInit() {
-    this.selectedEmployee = +this.route.snapshot.paramMap.get('id');
+    this.selectedEmployee = this.route.snapshot.paramMap.get('id');
   }
 
   getEmployeeNameAndGender(): string {
